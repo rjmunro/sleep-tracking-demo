@@ -57,3 +57,34 @@ app.post("/api/daily", async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+// Route to get users and their daily entry count
+app.get("/api/users", async (req: Request, res: Response) => {
+  try {
+    // Query users and count their daily entries
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        _count: {
+          select: {
+            dailies: true,
+          },
+        },
+      },
+    });
+
+    // Transform the result to include the count in the response
+    const result = users.map((user) => ({
+      id: user.id,
+      name: user.name,
+      dailyEntriesCount: user._count.dailies,
+    }));
+
+    // Send the response
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
