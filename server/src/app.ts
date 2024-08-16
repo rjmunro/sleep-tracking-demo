@@ -88,3 +88,33 @@ app.get("/api/users", async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+// Route to get a single user by ID
+app.get("/api/users/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    // Fetch the user by ID, including their daily records
+    const user = await prisma.user.findUnique({
+      where: {
+        id: parseInt(id), // Convert the id from string to integer
+      },
+      select: {
+        id: true,
+        name: true,
+        dailies: {select: {id: true, date: true, hours: true}},
+      },
+    });
+
+    // If the user is not found, return a 404
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Send the user data as the response
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
