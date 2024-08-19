@@ -4,6 +4,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import "./index.css";
 import FormComponent from "./FormComponent";
 import UsersTableComponent from "./UsersTableComponent";
+import UserChartComponent from "./UserChartComponent";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@ function SleepTracker() {
         selectedUserId={selectedUserId}
         setSelectedUserId={setSelectedUserId}
       />
+      <UserChartComponent userId={selectedUserId} />
     </>
   );
 }
