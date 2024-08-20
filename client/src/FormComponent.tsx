@@ -1,6 +1,6 @@
 // FormComponent.tsx
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface FormData {
   name: string;
@@ -9,6 +9,8 @@ interface FormData {
 }
 
 const FormComponent: React.FC = () => {
+  const queryClient = useQueryClient();
+
   const [formData, setFormData] = useState<FormData>({
     name: "",
     date: new Date().toISOString().substring(0, 10),
@@ -26,6 +28,8 @@ const FormComponent: React.FC = () => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+      // Ensure other components update with the new data
+      queryClient.invalidateQueries();
     });
   });
 
